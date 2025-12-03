@@ -20,8 +20,8 @@ Clone this repository to folder `~/BadPart`
 
 ```
 cd ~
-git clone <repo_url> BadPart
-cd BadPart
+git clone https://github.com/MiaoQS/ENEE662-Project ENEE662-Project
+cd ENEE662-Project
 ```
 
 Prepare the target MDE networks ([Monodepth2](https://github.com/nianticlabs/monodepth2), [DepthHints](https://github.com/nianticlabs/depth-hints) following their official instructions and put them in the directory of `DepthNetworks`. Download their official pretrained model weights (with the highest input resolution and best performance) into a sub-folder named `models` inside each network's directory (e.g., `DepthNetworks/monodepth2/models`).
