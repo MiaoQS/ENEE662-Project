@@ -37,7 +37,6 @@ def main():
     patch_area = get_patch_area(attack_task, scene_size, args.patch_ratio)
     logging.info(f"patch_area: {patch_area}")
 
-    # Countermeasure
     tracker = None
 
     from attack.depth_model import import_depth_model

@@ -201,16 +201,6 @@ class Blackbox_patch(PatchAttack):
             
             patch_curr = patch_curr + lr * gradf.numpy()
             patch_curr = np.clip(patch_curr, 0, 1)
-
-            if not Config.hardbeat_oneway:
-                # record neighboring triggers #
-                for t in range(len(hist_patch)):
-                    p1 = hist_patch[t].flatten()
-                    p2 = patch_curr.flatten()
-                    sim = ((p1.dot(p2) / (norm(p1) * norm(p2))) + 1) / 2
-                    sim_graph[i % 100, t] = sim
-                    sim_graph[t, i % 100] = sim
-
             # update history
             
             score_curr = self.Score.score(patch_curr, patch_only=patch_only)
