@@ -50,40 +50,6 @@ class DepthModelWrapper(torch.nn.Module):
         # print(disp.shape)
         return disp
 
-class SQLdepthModelWrapper(torch.nn.Module):
-    def __init__(self, encoder, decoder) -> None:
-        super(SQLdepthModelWrapper, self).__init__()
-        self.encoder = encoder
-        self.decoder = decoder
-    
-    def forward(self, input_image):
-        features = self.encoder(input_image)
-        outputs = self.decoder(features)
-        disp = outputs[("disp", 0)]
-        disp = nn.functional.interpolate(disp, input_image.shape[-2:], mode='bilinear', align_corners=True)
-        # print(disp.shape)
-        disp = depth_to_disp(disp, 0.1, 100)
-        return disp
-
-class PlaneDepthModelWrapper(torch.nn.Module):
-    def __init__(self, encoder, decoder) -> None:
-        super(PlaneDepthModelWrapper, self).__init__()
-        self.encoder = encoder
-        self.decoder = decoder
-    
-    def forward(self, input_color):
-        grid = torch.meshgrid(torch.linspace(-1, 1, Config.input_W_PD), torch.linspace(-1, 1, Config.input_H_PD), indexing="xy")
-        # grid = torch.meshgrid(torch.linspace(-1, 1, Config.input_W_PD), torch.linspace(-1, 1, Config.input_H_PD))
-        # grid = [_.T for _ in grid]
-        grid = torch.stack(grid, dim=0)
-        grids = grid[None, ...].expand(input_color.shape[0], -1, -1, -1).cuda()
-        output = self.decoder(self.encoder(input_color), grids)
-        pred_disp = output["disp"]
-        # pred_disp = output["disp"][:, 0]
-        # print(pred_disp.shape)
-        pred_disp = (pred_disp - 0.7424) / 741.6576
-        return pred_disp
-
 
 def disp_to_depth(disp, min_depth, max_depth):
     """Convert network's sigmoid output into depth prediction
