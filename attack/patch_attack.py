@@ -2,10 +2,8 @@ import torch
 import os
 import logging
 from torch.utils.data.dataloader import DataLoader
-from torchvision.transforms import ToTensor, Resize
-from torchvision.utils import save_image
+from torchvision.transforms import ToTensor
 from tensorboardX import SummaryWriter
-from PIL import Image
 
 from config import Config
 from attack.dataset import KittiDataset
@@ -87,21 +85,20 @@ class PatchAttack:
             log_info = "Current iteration: {}, Best loss: {}".format(i_iter, best_loss)
             logging.info(log_info)
             if not isinstance(self.tb_logger, type(None)):
-                self.tb_logger.add_scalar(method + '_' + self.task +'/Best_loss', best_loss, i_iter)
+                self.tb_logger.add_scalar(method + '_'  +'/Best_loss', best_loss, i_iter)
                 error_patch, error_whole = self.Score.score(patch_curr, epe=True, patch_only=patch_only, train=False)
                 logging.info(f'mean depth error in patch area: {error_patch}, mean depth error in whole area: {error_whole}')
                 self.tb_logger.add_scalar(method + '_MDE/Mean_depth_error_patch', error_patch, i_iter)
                 self.tb_logger.add_scalar(method + '_MDE/Mean_depth_error_whole', error_whole, i_iter)
-                self.tb_logger.add_scalar(method + '_' + self.task +'/Query_times', self.Score.query_times, i_iter)
+                self.tb_logger.add_scalar(method + '_'  +'/Query_times', self.Score.query_times, i_iter)
                 if self.tracker != None:
-                    self.tb_logger.add_scalar(method + '_' + self.task + '/detection_rate', (self.Score.detection / self.Score.query_times), self.Score.query_times)
-                    self.tb_logger.add_scalar(method + '_' + self.task + '/detection_count', self.Score.detection, self.Score.query_times)
+                    self.tb_logger.add_scalar(method + '_'  + '/detection_rate', (self.Score.detection / self.Score.query_times), self.Score.query_times)
+                    self.tb_logger.add_scalar(method + '_'  + '/detection_count', self.Score.detection, self.Score.query_times)
 
                 
         if i_iter % img_gap == 0 and self.tb_logger != None:
             if not isinstance(patch_curr, torch.Tensor):
                 patch_curr = self.numpy2tensor(patch_curr)
-            # self.tb_logger.add_image(method + '_' + self.task +'/curr_patch', best_patch.squeeze(0), i_iter)
             log_img = self.Score.viz(patch_curr)
             self.tb_logger.add_image(method + '_MDE/Scene_depth', ToTensor()(log_img), i_iter)
             logging.info("Image logged.")
@@ -124,7 +121,7 @@ class PatchAttack:
         if i_iter % img_gap == 0 and self.tb_logger != None:
             if not isinstance(best_patch, torch.Tensor):
                 best_patch = self.numpy2tensor(best_patch)
-            self.tb_logger.add_image(method + '_' + self.task +'/eval_Best_patch', best_patch.squeeze(0), i_iter)
+            self.tb_logger.add_image(method + '_' + '/eval_Best_patch', best_patch.squeeze(0), i_iter)
             log_img = self.eval_Score.viz(best_patch)
             self.tb_logger.add_image(method + '_MDE/eval_Scene_depth', ToTensor()(log_img), i_iter)
             logging.info('Evaluation Image logged')

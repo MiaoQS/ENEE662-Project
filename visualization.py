@@ -2,8 +2,7 @@ import os
 import argparse
 import torch
 import numpy as np
-from torchvision import transforms
-from my_utils import set_random_seed, get_mean_depth_diff, EPE
+from my_utils import set_random_seed
 from config import Config
 from my_utils import get_patch_area
 import matplotlib.pyplot as plt
@@ -14,8 +13,8 @@ from torchvision.utils import save_image
 
 def parse():
     parser = argparse.ArgumentParser(description='Define hyperparameters.')
-    parser.add_argument('--model_name', type=str, choices=['monodepth2', 'planedepth', 'depthhints', 'SQLdepth', 'FlowNetC', 'PWC-Net','FlowNet2'], required=True, help='name of the subject model.')
-    parser.add_argument('--attack_method', type=str, choices=['ours', 'GA_attack', 'S-RS', 'hardbeat', 'whitebox'], required=True, help='name of the attack method.')
+    parser.add_argument('--model_name', type=str, choices=['monodepth2', 'depthhints'], required=True, help='name of the subject model.')
+    parser.add_argument('--attack_method', type=str, choices=['ours', 'GA_attack'], required=True, help='name of the attack method.')
     parser.add_argument('--patch_path', type=str, required=True, help='path of the adversarial patch.')
     parser.add_argument('--seed', type=int, default=1, help='Random Seed')
     parser.add_argument('--n_batch', type=int, default=50, help='number of ppictures for evaluation')
@@ -37,48 +36,14 @@ def disp_viz(disp: torch.tensor, path, difference=False):
     
     plt.close()
 
-def flow_visualize(flow: torch.tensor, path, difference=False):
-    flow = flow[0].permute(1,2,0).detach().cpu().numpy()
-    flow = flow_viz.flow_to_image(flow, difference=difference)
-    plt.imshow(flow)
-    plt.axis('off')
-    plt.savefig(path, bbox_inches='tight', pad_inches=0)
-    plt.close()
-
-def flow_visualize_v2(frame1: torch.tensor, flow_ori: torch.tensor, flow_attack: torch.tensor, path):
-    frame1 = transforms.ToPILImage()(frame1.squeeze())
-    flow_ori = flow_ori[0].permute(1,2,0).detach().cpu().numpy()
-    flow_attack = flow_attack[0].permute(1,2,0).detach().cpu().numpy()
-    flow_diff = flow_ori - flow_attack
-    flow_ori = flow_viz.flow_to_image(flow_ori, difference=True)
-    flow_attack = flow_viz.flow_to_image(flow_attack, difference=True)
-    flow_diff = flow_viz.flow_to_image(flow_diff, difference=True)
-    # plt.imshow(flow)
-    # plt.axis('off')
-    # plt.savefig(path, bbox_inches='tight', pad_inches=0)
-    # plt.close()
-    fig: Figure = plt.figure(figsize=(8, 4)) # width, height
-    plt.subplot(221); plt.imshow(flow_ori); plt.title('original'); plt.axis('off')
-    plt.subplot(222); plt.imshow(flow_attack); plt.title('attack'); plt.axis('off')
-    plt.subplot(223); plt.imshow(flow_diff); plt.title('difference'); plt.axis('off')
-    plt.subplot(224); plt.imshow(frame1); plt.title('frame1'); plt.axis('off')
-    fig.canvas.draw()
-    plt.savefig(path, pad_inches=0)
-    plt.close()
-
 
 def main(args):
 
     set_random_seed(args.seed, deterministic=True)
     model_name  = args.model_name
     os.mkdir(f"visualization/{args.model_name}")
-
-    if model_name in ['FlowNetC','PWC-Net','FlowNet2']:
-        attack_task = 'OF'
-    elif model_name in ['depthhints','monodepth2']:
-        attack_task = 'MDE'
-    else:
-        raise RuntimeError('The attack model is not supported!')
+    attack_task = 'MDE'
+    
     scene_size  = Config.model_scene_sizes_WH[model_name]
     patch_area = get_patch_area(attack_task, scene_size, args.patch_ratio)
 
@@ -116,10 +81,6 @@ def main(args):
                 disp = model(scene.to(Config.device))
                 disp_save = f"visualization/{args.model_name}/depth_{i}.png"
                 disp_viz(disp, disp_save)
-
-
-    elif attack_task == 'OF':
-        raise NotImplementedError
 
 
 if __name__ == "__main__":

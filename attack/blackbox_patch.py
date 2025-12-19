@@ -1,5 +1,4 @@
 import torch
-import logging
 import numpy as np
 from numpy.linalg import norm
 import math
@@ -8,7 +7,7 @@ from skimage.transform import resize
 from scipy.special import softmax
 from attack.patch_attack import PatchAttack
 from config import Config
-from my_utils import normalize_score, softmax_parent_selection, find_neighbor
+from my_utils import softmax_parent_selection, find_neighbor
 
 
 
@@ -97,12 +96,8 @@ class Blackbox_patch(PatchAttack):
         scene_loader = DataLoader(self.train_dataset, batch_size=Config.train_scenes, shuffle=False,\
                                     num_workers=2, pin_memory=True, drop_last=True)
         scene_loader_iter = iter(scene_loader)
-        if self.task == 'OF':
-            present_frame1, present_frame2 = next(scene_loader_iter) # tensor[trail,3,h,w]
-            c = present_frame1.shape[1]
-        else:
-            scenes, _ = next(scene_loader_iter)
-            c = scenes.shape[1]
+        scenes, _ = next(scene_loader_iter)
+        c = scenes.shape[1]
         p_t, p_l, p_h, p_w = self.patch_area
         # Initialize pattern
         patch_curr = np.random.rand(c, p_h, p_w)
@@ -157,28 +152,16 @@ class Blackbox_patch(PatchAttack):
                 patches_candi = np.clip(noise + patch_curr, 0, 1)
                 noise = patches_candi - patch_curr
 
-                if self.task == 'MDE':
-                    indice = torch.randperm(scenes.shape[0])[:1]
-                    scene = scenes[indice]
-                    # scene = scenes[0:1,:,:,:]
-                    scores = self.Score.gredient_sample(
-                                            patches_candi, #numpy[trail,3,h,w]
-                                            patch_curr, #numpy[1,3,h,w]
-                                            scene, #tensor[1,3,h,w]
-                                            patch_only)
-                elif self.task == 'OF':
-                    indice = torch.randperm(present_frame1.shape[0])[:1]
-                    frame_curr1, frame_curr2 = present_frame1[indice], present_frame2[indice]
-                    # frame_curr1, frame_curr2 = present_frame1[0:1,:,:,:], present_frame2[0:1,:,:,:]
-                    scores = self.Score.gredient_sample(
-                                            patches_candi, #numpy[trail,3,h,w]
-                                            patch_curr, #numpy[trail,3,h,w]
-                                            frame_curr1, #tensor[1,3,h,w]
-                                            frame_curr2, #tensor[1,3,h,w]
-                                            patch_only)
+                indice = torch.randperm(scenes.shape[0])[:1]
+                scene = scenes[indice]
+                # scene = scenes[0:1,:,:,:]
+                scores = self.Score.gredient_sample(
+                                        patches_candi, #numpy[trail,3,h,w]
+                                        patch_curr, #numpy[1,3,h,w]
+                                        scene, #tensor[1,3,h,w]
+                                        patch_only)
 
                 candi_y = scores.cpu().numpy()  # scores(-1-1) of all sample points
-                # if self.task == 'OF':
                 candi_y = np.sign(candi_y)
                 # candi_y = 1.0/ (1+ np.exp(np.negative(candi_y)))
                 mean_y = np.mean(candi_y)   # mean of scores

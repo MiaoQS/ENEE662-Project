@@ -4,7 +4,7 @@ Group Memebers: Yangfan Deng, Tianyang Chen, Zhaoyi Liu.
 
 This is the official PyTorch implementation of our Project "On Evaluating the Robustness of Monocular Depth Estimation Models: Zeroth-Order Adversarial Patch Optimization".
 
-## Table of Contents
+<!-- ## Table of Contents
 
 1. [Prepare for the Code](#environment-preparation)
 2. [Construct the Environment](#code-preparation)
@@ -12,7 +12,7 @@ This is the official PyTorch implementation of our Project "On Evaluating the Ro
 5. [Prepare for the Configuration](#configuration-preparation)
 6. [Launch black-box attacks](#launch-black-box-attacks)
 7. [Evaluate the patch Performance](#evaluate-the-patch)
-8. [Visualize the Attacking Performances](#attack-the-google-online-service)
+8. [Visualize the Attacking Performances](#attack-the-google-online-service) -->
 
 ## Code preparation
 

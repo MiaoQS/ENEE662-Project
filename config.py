@@ -15,39 +15,17 @@ class Config(object):
     input_W_GoogleAPI = 192
     model_scene_sizes_WH = {
         'monodepth2': (input_H, input_W),
-        'planedepth': (input_H_PD, input_W_PD),
         'depthhints': (input_H, input_W),
-        'FlowNetC': (input_H, input_W),
-        'FlowNet2': (input_H, input_W),
-        'PWC-Net': (input_H, input_W),
-        'SQLdepth': (input_H, input_W),
-        'google_api': (input_H_GoogleAPI, input_W_GoogleAPI)
     }
     blacklight_shape = (20, 64)
-    optical_flow_model_path = {
-        'FlowNetC': 'FlowNetworks/flow_models/pretrained/FlowNet2-C_checkpoint.pth.tar',
-        'FlowNet2': 'FlowNetworks/flow_models/pretrained/FlowNet2_checkpoint.pth.tar',
-        'PWC-Net': 'FlowNetworks/flow_models/pretrained/pwc_net_chairs.pth.tar'
-    }
     threshold_betwSquare = {
         'monodepth2': 1, # 10 default
-        'planedepth': 10,
         'depthhints': 1,
-        'FlowNetC': 1,
-        'FlowNet2': 1,
-        'PWC-Net': 1,
-        'SQLdepth':1,
-        'google_api': 1,
+
     }
     threshold_inSquare = {
         'monodepth2': 1, 
-        'planedepth': 15,# 15 default
         'depthhints': 1,
-        'FlowNetC': 1,
-        'FlowNet2': 1,
-        'PWC-Net': 1,
-        'SQLdepth': 1,
-        'google_api': 1,
     }
     eps = 1e-10
     init_noise_weight = 0.1
@@ -70,7 +48,6 @@ class Config(object):
     UseAdam = True
     Oneway = True # true is better than false
     hardbeat_oneway = True
-    api_portrait_image = 'Assets/portrait_batch'
 
     # parameters of countermeasure Blacklight
     window_size = 20
