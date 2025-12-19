@@ -1,4 +1,4 @@
-name: BadPart
+name: Zoo
 channels:
   - defaults
 dependencies:

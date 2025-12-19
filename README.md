@@ -28,7 +28,7 @@ Prepare the target MDE networks ([Monodepth2](https://github.com/nianticlabs/mon
 
 The directories should be organized as:
 ```
-BadPart
+ENEE662-Project
 ├── DepthNetworks
     ├── depth-hints
     ├── monodepth2
@@ -39,7 +39,7 @@ BadPart
 Create a new conda environment using the environment.yml file:
 ```
 conda env create -f environment.yml
-conda activate BadPart
+conda activate Zoo
 ```
 
 
