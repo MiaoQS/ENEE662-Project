@@ -45,8 +45,6 @@ class GoogleAPIWrapper(torch.nn.Module):
         if response.status_code == 200:
             depth_map = np.frombuffer(response.content, dtype=np.float32)
             # depth_map = np.array(response.json()['depthArray'])
-
-            # 将其重塑为 [1, 1, h, w]
             # print(depth_map.shape)
             depth_map_reshaped = depth_map.reshape(1, 1, Config.input_H_GoogleAPI, Config.input_W_GoogleAPI)
             return depth_map_reshaped

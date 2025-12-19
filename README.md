@@ -16,7 +16,7 @@ This is the official PyTorch implementation of our Project "On Evaluating the Ro
 
 ## Code preparation
 
-Clone this repository to folder `~/BadPart`
+Clone this repository
 
 ```
 cd ~
@@ -32,8 +32,6 @@ BadPart
 ├── DepthNetworks
     ├── depth-hints
     ├── monodepth2
-    ├── PlaneDepth
-    ├── SQLdepth
 ```
 
 ## Environment preparation
@@ -65,9 +63,7 @@ kitti_dataset_root = "/path/to/dataset/KITTI/flow/"
 log_dir = "/path/to/logs"
 ```
 
-## Launch black-box attacks
-
-Run the following code to launch `BadPart` on `Monodepth2`:
+## Launch optimization
 
 ```
 CUDA_VISIBLE_DEVICES=0 python main.py \
@@ -78,9 +74,6 @@ CUDA_VISIBLE_DEVICES=0 python main.py \
     --n_batch 1 \
     --n_iter 10001 \
     --trail 20 \
-    --square_steps 200\
-    --p_init 0.1 \
-    --p_sche v6 \
     --targeted_attack \
     --patch_only \
     --test_name monodepth2
@@ -92,19 +85,10 @@ You can change the target model with the option `--model_name` and available mod
     - DepthHints    -> `depthhints`
 
 You can also change the attack method with the option `--attack_method` and available methods are:
-- BadPart   -> `ours`
-- Sparse-RS -> `S-RS`
+- Ours   -> `ours`
 - GenAttack -> `GA_attack`
-- White-Box -> `whitebox`
 
 For detailed explanations of each options, please refer to the file `options.py`
-
-You can see the visulized attack performance using Tensorboard by running:
-
-```
-tensorboard --logdir /path/to/logs --samples_per_plugin images=200
-```
-
 The generated patch file is saved to folder `/path/to/logs/name_for_this_test/` by default.
  
 ## Evaluate the patch
